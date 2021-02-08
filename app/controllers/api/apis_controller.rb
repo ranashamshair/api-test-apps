@@ -3,15 +3,17 @@ class Api::ApisController < ApplicationController
     org = Organization.where(source_uuid: params[:source_uuid]).first
     if org.present?
       org.update(request_params)
-    else
+    elsif request_params.reject { |key,value| value == "" || value == nil }.present?
       org = Organization.new(request_params)
       org.source_uuid = SecureRandom.uuid
       org.save
     end
     if org.present? && org.errors.blank?
       render json: {status: 200, data: OrganizationSerializer.new(org) }, status: :ok
-    else
+    elsif org.present? && org.errors.present?
       render json: {status: 422, message: org.errors.messages}, status: :unprocessable_entity
+    else
+      render json: {status: 422, message: "Please enter some data"}, status: :unprocessable_entity
     end
   end
 
