@@ -1,4 +1,6 @@
 class Api::ApisController < ApplicationController
+  before_action :decode_token
+
   def testing
     org = Organization.where(source_uuid: params[:source_uuid]).first
     if org.present?
