@@ -7,7 +7,7 @@ class Api::ApisController < ApplicationController
       org.update(request_params)
     elsif request_params.reject { |key,value| value == "" || value == nil }.present?
       org = Organization.new(request_params)
-      org.source_uuid = SecureRandom.uuid
+      org.source_uuid = SecureRandom.uuid if params[:source_uuid].blank?
       org.save
     end
     if org.present? && org.errors.blank?
@@ -33,7 +33,8 @@ class Api::ApisController < ApplicationController
       :source_raw_data,
       :apify_run_url,
       :bk_external_id,
-      :post_raw_data,
-      :status)
+      
+      :status,
+      post_raw_data: {})
     end
 end
